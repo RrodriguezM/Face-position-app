@@ -10,7 +10,6 @@ import boto3
 import os
 from helpers.mqtt_aws import MQTT_AWS
 
-print(os.environ.get('AMAZON_ROOT_CA'))
 client = MQTT_AWS(os.environ.get('AMAZON_ROOT_CA'), os.environ.get('PRIVATE_PEM_KEY'),
                   os.environ.get('CERTIFICATE_PEM_CTR'), os.environ.get('IOT_ENDPOINT'))
 
@@ -61,7 +60,7 @@ def feature_extractor_img(image):
 
 
 # Load Pickle
-with open('automl_front.pkl', 'rb') as f:
+with open('automl_front_1000.pkl', 'rb') as f:
     automl = pickle.load(f)
 
 s3_client = boto3.client('s3')
