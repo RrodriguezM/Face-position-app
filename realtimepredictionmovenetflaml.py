@@ -29,7 +29,7 @@ def preprocess_movenet_img(image):
     # image = tf.compat.v1.image.decode_jpeg(image)
     image = tf.expand_dims(image, axis=0)
     # Resize and pad the image to keep the aspect ratio and fit the expected size.
-    image = tf.cast(tf.image.resize_with_pad(image, 192, 192), dtype=tf.int32)
+    image = tf.cast(tf.image.resize(image, [192, 192]), dtype=tf.int32)
     return image
 
 
@@ -39,7 +39,7 @@ def preprocess_movenet(img_path):
     image = tf.compat.v1.image.decode_jpeg(image)
     image = tf.expand_dims(image, axis=0)
     # Resize and pad the image to keep the aspect ratio and fit the expected size.
-    image = tf.cast(tf.image.resize_with_pad(image, 192, 192), dtype=tf.int32)
+    image = tf.cast(tf.image.resize(image, 192, 192), dtype=tf.int32)
     return image
 
 
@@ -67,9 +67,9 @@ s3_client = boto3.client('s3')
 client.MQTTConnect()
 try:
     while True:
-        time.sleep(10)
         image = takePicture("192.168.101.172")
         features = feature_extractor_img(image)
+        # print("features: ", features)
         prediction = automl.predict(pd.DataFrame(features.reshape(1, 15)))
         file_name = f"{class_names[prediction[0]]}/{time.time()}.jpg"
         payload = {
@@ -84,6 +84,7 @@ try:
             "tmp.jpg", BUCKET_NAME, file_name)
 
         print(payload)
+        time.sleep(1)
 except Exception as e:
     print(e)
     client.MQTTDisconnect()
